@@ -9,13 +9,11 @@ use App\Models\User;
 
 class AuthController extends Controller
 {
-    // Exibe a tela de login
     public function showLoginForm()
     {
         return view('auth.login');
     }
 
-    // Processa o login
     public function login(Request $request)
     {
         $credentials = $request->validate([
@@ -24,16 +22,17 @@ class AuthController extends Controller
         ]);
 
         if (Auth::attempt($credentials)) {
-            return redirect()->intended('/tasks'); // Redireciona para a página de tarefas após login
+            return redirect()->intended('/tasks');
         }
 
         return back()->with('error', 'Credenciais inválidas');
     }
 
-    // Realiza logout
     public function logout(Request $request)
     {
         Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
         return redirect()->route('login');
-    }
+    }    
 }
