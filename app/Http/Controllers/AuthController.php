@@ -9,71 +9,31 @@ use App\Models\User;
 
 class AuthController extends Controller
 {
-    /**
-     * Exibe o formulário de login.
-     */
+    // Exibe a tela de login
     public function showLoginForm()
     {
         return view('auth.login');
     }
 
-    /**
-     * Processa a autenticação do usuário.
-     */
+    // Processa o login
     public function login(Request $request)
     {
         $credentials = $request->validate([
             'email' => 'required|email',
-            'password' => 'required',
+            'password' => 'required'
         ]);
 
         if (Auth::attempt($credentials)) {
-            $request->session()->regenerate();
-            return redirect()->intended('/dashboard');
+            return redirect()->intended('/tasks'); // Redireciona para a página de tarefas após login
         }
 
-        return back()->withErrors([
-            'email' => 'As credenciais fornecidas não correspondem aos nossos registros.',
-        ]);
+        return back()->with('error', 'Credenciais inválidas');
     }
 
-    /**
-     * Processa o logout do usuário.
-     */
+    // Realiza logout
     public function logout(Request $request)
     {
         Auth::logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-        return redirect('/');
-    }
-
-    /**
-     * Exibe o formulário de registro.
-     */
-    public function showRegisterForm()
-    {
-        return view('auth.register');
-    }
-
-    /**
-     * Processa o registro de um novo usuário.
-     */
-    public function register(Request $request)
-    {
-        $data = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8|confirmed',
-        ]);
-
-        $user = User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => Hash::make($data['password']),
-        ]);
-
-        Auth::login($user);
-        return redirect('/dashboard');
+        return redirect()->route('login');
     }
 }
