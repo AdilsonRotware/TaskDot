@@ -6,7 +6,7 @@
     <title>Login</title>
 </head>
 <body>
-    <h1>Página de Login</h1>
+    <h1>Tela de Login</h1>
     <form action="{{ route('login') }}" method="POST">
         @csrf
         <input type="email" name="email" placeholder="E-mail">
